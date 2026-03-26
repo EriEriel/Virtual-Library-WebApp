@@ -26,19 +26,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
 
   return (
     <main className="container mx-auto py-10 px-4">
-      <div className="flex justify-between items-center mb-10">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight">Virtual Shelf</h1>
-          <p className="text-muted-foreground mt-2">Manage your favorite stories and bookmarks in one place!!</p>
-        </div>
-
-        <div className="flex gap-4 items-center">
-          <SearchBar />
-          <AddEntryModal />
-          <LoginModal />
-        </div>
-      </div>
-
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {entries.length === 0 ? (
           <div className="col-span-full py-20 text-center border-2 border-dashed rounded-lg">
