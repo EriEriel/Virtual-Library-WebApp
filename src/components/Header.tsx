@@ -1,5 +1,7 @@
 "use client";
 
+import LoginModal from "./LoginModal";
+
 export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex h-16 w-full items-center justify-between border-none bg-surface px-8 dark:bg-background">
@@ -32,6 +34,9 @@ export default function Header() {
       </nav>
 
       <div className="flex items-center gap-6">
+
+        <LoginModal />
+
         {/* Terminal Icon (Clean SVG) */}
         <button className="text-on-surface hover:text-white transition-colors cursor-pointer focus:outline-none">
           <svg
@@ -60,6 +65,7 @@ export default function Header() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
           </svg>
         </button>
+
       </div>
     </header>
   );

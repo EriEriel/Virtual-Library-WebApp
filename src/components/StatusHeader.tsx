@@ -24,7 +24,7 @@ export default function StatusHeader({
       {/* Main Title with Terminal Cursor */}
       <h1 className="text-6xl font-bold tracking-tighter text-white flex items-center">
         {title}
-        <span className="ml-1 w-[0.5] h-[1.2em] bg-white animate-pulse opacity-5 inline-block" aria-hidden="true" />
+        <span className="ml-1 w-[2.2] h-[1.2em] bg-white animate-pulse opacity-5 inline-block" aria-hidden="true" />
       </h1>
 
       <style>{`

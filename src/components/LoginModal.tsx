@@ -35,13 +35,23 @@ export default function LoginModal() {
             {session.user?.name?.[0]?.toUpperCase()}
           </div>
         )}
-        <span className="text-sm font-medium">{session.user?.name}</span>
+        <span className="font-mono text-white text-sm font-medium">{session.user?.name}</span>
         <Button
-          variant="outline"
-          className="cursor-pointer text-black text-sm"
+          className="text-on-surface hover:text-white transition-colors cursor-pointer focus:outline-none"
           onClick={() => signOut()}
         >
-          Sign out
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="size-7"
+          >
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
         </Button>
       </div>
     )
@@ -50,9 +60,21 @@ export default function LoginModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="cursor-pointer text-black text-xl p-6 hover:shadow-md transition-shadow">
-          SignIn
-        </Button>
+        {/* Login Icon (Clean SVG) */}
+        <button className="text-on-surface hover:text-white transition-colors cursor-pointer focus:outline-none">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="size-7"
+          >
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+            <polyline points="10 17 15 12 10 7" />
+            <line x1="15" y1="12" x2="3" y2="12" />
+          </svg>
+        </button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

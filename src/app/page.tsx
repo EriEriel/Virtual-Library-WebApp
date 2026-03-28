@@ -64,7 +64,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
   const entries = await getUserEntries(session.user.id, search);
 
   return (
-    <main className="container mx-auto py-10 px-4">
+    <main className="container mx-auto py-10 px-4 mt-10">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {entries.length === 0 ? (
           <div className="col-span-full py-20 text-center border-2 border-dashed rounded-lg">
