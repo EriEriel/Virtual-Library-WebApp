@@ -8,7 +8,6 @@ import MetricGrid from "@/components/MetricGrid";
 import StatusHeader from "@/components/StatusHeader";
 import { SearchBar } from "@/components/SearchBar";
 import AddEntryModal from "@/components/AddEntryModal";
-import Sidebar from "@/components/Sidebar";
 
 async function getUserEntries(userId: string, search: string = "") {
   return await prisma.entry.findMany({
@@ -45,11 +44,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
     // );
 
     return (
-      <main className="ml-64 pt-24 px-12 pb-12 min-h-screen bg-[#202123] text-white">
+      <main className="ml-64 mr-64 pt-24 px-12 pb-12 min-h-screen bg-[#202123] text-white">
 
         <StatusHeader />
 
-        <Sidebar />
 
         {/* Big Data Visualizations */}
         <MetricGrid />
@@ -70,9 +68,8 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
 
   return (
 
-    <main className="pl-64 py-10 px-4 mt-10 bg-[#202123]">
+    <main className="ml-64 mr-64 py-10 px-4 mt-10 bg-[#202123] min-h-screen">
 
-      <Sidebar />
       <div className="flex gap-4 items-center justify-end">
         {session && <SearchBar />}
         {session && <AddEntryModal />}
