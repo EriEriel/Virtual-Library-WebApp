@@ -70,7 +70,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
 
   return (
 
-    <main className="pl-64 py-10 px-4 mt-10">
+    <main className="pl-64 py-10 px-4 mt-10 bg-[#202123]">
 
       <Sidebar />
       <div className="flex gap-4 items-center justify-end">
