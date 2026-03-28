@@ -73,7 +73,7 @@ export default function LoginPage() {
           <button
             onClick={() => handleOAuth("google")}
             disabled={!!loading}
-            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white text-[#1a1a1a] text-sm rounded-lg border border-[#e5e5e5] hover:bg-[#fafafa] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white text-[#1a1a1a] text-sm rounded-lg border border-[#e5e5e5] hover:bg-[#fafafa] transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {loading === "google" ? (
               <Spinner />

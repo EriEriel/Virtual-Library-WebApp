@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import BentoGrid from "@/components/BentoGrid";
 import MetricGrid from "@/components/MetricGrid";
 import StatusHeader from "@/components/StatusHeader";
+import { SearchBar } from "@/components/SearchBar";
+import AddEntryModal from "@/components/AddEntryModal";
 
 async function getUserEntries(userId: string, search: string = "") {
   return await prisma.entry.findMany({
@@ -65,7 +67,12 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
 
   return (
     <main className="container mx-auto py-10 px-4 mt-10">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="flex gap-4 items-center justify-end">
+        {session && <SearchBar />}
+        {session && <AddEntryModal />}
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-5">
         {entries.length === 0 ? (
           <div className="col-span-full py-20 text-center border-2 border-dashed rounded-lg">
             <p className="text-muted-foreground">Your shelf is empty.</p>

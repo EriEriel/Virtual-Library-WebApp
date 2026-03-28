@@ -4,7 +4,6 @@ import { useSession, signOut } from "next-auth/react"
 import { useState } from "react"
 import Image from "next/image"
 import LoginPage from "@/app/login/page"
-import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -36,7 +35,8 @@ export default function LoginModal() {
           </div>
         )}
         <span className="font-mono text-white text-sm font-medium">{session.user?.name}</span>
-        <Button
+        {/* Logout Icon (Clean SVG) */}
+        <button
           className="text-on-surface hover:text-white transition-colors cursor-pointer focus:outline-none"
           onClick={() => signOut()}
         >
@@ -48,11 +48,8 @@ export default function LoginModal() {
             stroke="currentColor"
             className="size-7"
           >
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-            <polyline points="16 17 21 12 16 7" />
-            <line x1="21" y1="12" x2="9" y2="12" />
-          </svg>
-        </Button>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+          </svg>        </button>
       </div>
     )
   }
@@ -70,9 +67,7 @@ export default function LoginModal() {
             stroke="currentColor"
             className="size-7"
           >
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-            <polyline points="10 17 15 12 10 7" />
-            <line x1="15" y1="12" x2="3" y2="12" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
           </svg>
         </button>
       </DialogTrigger>
