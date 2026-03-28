@@ -37,7 +37,7 @@ export default function LoginModal() {
         <span className="font-mono text-white text-sm font-medium">{session.user?.name}</span>
         {/* Logout Icon (Clean SVG) */}
         <button
-          className="text-on-surface hover:text-white transition-colors cursor-pointer focus:outline-none"
+          className="text-gray-50 hover:text-white transition-colors cursor-pointer focus:outline-none"
           onClick={() => signOut()}
         >
           <svg
