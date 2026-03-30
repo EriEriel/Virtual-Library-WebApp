@@ -37,12 +37,12 @@ export default function EntryCard({ entry }: { entry: EntryWithTags }) {
         </div>
         <div>
 
-          <div className="text-xl text-black truncate max-w-xs">
+          <div className="text-xl text-white truncate max-w-xs">
             <a
               href={entry.url ?? undefined}
               target="_blank"
               rel="noopener noreferrer"
-              className={entry.url ? "hover:bg-gray-200 text-white cursor-pointer flex item-center gap-1" : "cursor-default"}
+              className={entry.url ? "hover:bg-stone-500 text-white cursor-pointer flex item-center gap-1" : "cursor-default"}
             >
               {entry.title}
               {entry.url && <ExternalLink className="w-3 h-3" />}
