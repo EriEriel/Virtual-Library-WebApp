@@ -11,8 +11,10 @@ export async function addEntry(formData: FormData) {
   const session = await auth()
   if (!session?.user?.id) redirect("/login")
 
+  const userId = session?.user?.id as string
   const title = formData.get("title") as string;
   const coverUrl = formData.get("coverUrl") as string;
+  const publicId = formData.get("publicId") as string;
   const author = formData.get("author") as string;
   const category = formData.get("category") as Category;
   const status = formData.get("status") as Status;
@@ -22,7 +24,7 @@ export async function addEntry(formData: FormData) {
 
   const tagNames = tagsInput ? tagsInput.split(",").map(t => t.trim()).filter(Boolean) : [];
 
-  await prisma.entry.create({
+  const entry = await prisma.entry.create({
     data: {
       title,
       coverUrl: coverUrl || null,
@@ -41,14 +43,29 @@ export async function addEntry(formData: FormData) {
     }
   });
 
+  if (url && publicId) {
+    await prisma.image.create({
+      data: {
+        url,
+        publicId,
+        entryId: entry.id,
+        userId,
+      }
+    })
+  }
+
   redirect("/");
 }
 
 // PATCH method
 export async function updateEntry(formData: FormData) {
+  const session = await auth()
+
+  const userId = session?.user?.id as string
   const id = formData.get("id") as string;
   const title = formData.get("title") as string;
   const coverUrl = formData.get("coverUrl") as string;
+  const publicId = formData.get("publicId") as string;
   const author = formData.get("author") as string;
   const category = formData.get("category") as Category;
   const status = formData.get("status") as Status;
@@ -57,7 +74,7 @@ export async function updateEntry(formData: FormData) {
   const tagsInput = formData.get("tags") as string;
   const tagNames = tagsInput ? tagsInput.split(",").map(t => t.trim()).filter(Boolean) : [];
 
-  await prisma.entry.update({
+  const entry = await prisma.entry.update({
     where: { id },
     data: {
       title,
@@ -77,6 +94,14 @@ export async function updateEntry(formData: FormData) {
       }
     }
   });
+
+  if (coverUrl && publicId) {
+    await prisma.image.upsert({
+      where: { entryId: id },
+      update: { url: coverUrl, publicId },
+      create: { url: coverUrl, publicId, entryId: id, userId },
+    })
+  }
 
   redirect("/");
 }
@@ -99,4 +124,21 @@ export async function toggleCurated(id: string, value: boolean) {
     data: { isCurated: value }
   })
   revalidatePath("/archive")
+}
+
+// Image Upload Method to link Cloudinary URL to userId and EntryId
+export async function imageUpload(formData: FormData) {
+  const userId = formData.get("userId") as string
+  const entryId = formData.get("entryId") as string | undefined
+  const url = formData.get("url") as string
+  const publicId = formData.get("publicId") as string
+
+  await prisma.image.create({
+    data: {
+      url,
+      publicId,
+      userId,
+      entryId,
+    }
+  });
 }

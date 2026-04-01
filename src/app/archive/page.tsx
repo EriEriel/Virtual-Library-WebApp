@@ -43,8 +43,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-5">
           {entries.length === 0 ? (
-            <div className="col-span-full py-20 text-center border-2 border-dashed rounded-lg">
-              <p className="text-muted-foreground">Your shelf is empty.</p>
+            <div className="col-span-full flex flex-col items-center justify-center py-32 text-center font-mono">
+              <div className="text-[#2f3133] text-6xl mb-4">[]</div>
+              <p className="text-[11px] text-[#4b5563] tracking-widest mb-1">// shelf is empty</p>
+              <p className="text-[#374151] text-xs">no entries found. add one to get started.</p>
             </div>
           ) : (
             entries.map((entry) => (
