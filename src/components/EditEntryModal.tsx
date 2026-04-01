@@ -8,18 +8,14 @@ import {
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
@@ -28,125 +24,124 @@ export default function EditEntryModal({ entry }: { entry: EntryWithTags }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Pencil className="w-4 h-4 cursor-pointer" />
+        <button className="flex items-center gap-1.5 font-mono text-xs text-[#6b7280] border border-[#2f3133] px-2 py-1 hover:border-green-400 hover:text-green-400 transition-colors cursor-pointer">
+          <Pencil className="w-3 h-3" />
+          edit
+        </button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogHeader> <DialogTitle>Edit Item</DialogTitle>
-          <DialogDescription>Edit your favourite material here!</DialogDescription>
+
+      <DialogContent className="bg-[#1a1b1d] border border-[#2f3133] text-white font-mono rounded-none max-w-lg">
+        <DialogHeader className="border-b border-[#2f3133] pb-4">
+          <DialogTitle className="text-green-400 text-sm tracking-widest uppercase">
+            $ edit entry
+          </DialogTitle>
+          <DialogDescription className="text-[#4b5563] text-xs">
+        // Modify your entry below
+          </DialogDescription>
         </DialogHeader>
 
-        <form action={updateEntry} className="space-y-4"> <input type="hidden" name="id" value={entry.id} />
+        <form action={updateEntry} className="space-y-3 pt-2">
+          <input type="hidden" name="id" value={entry.id} />
 
-          <div>
-            <Label htmlFor="coverUrl">Cover</Label>
-            <input id="coverUrl"
-              name="coverUrl"
-              className="border border-gray-300 rounded p-1 w-full"
-              defaultValue={entry.coverUrl ?? ""}
-              placeholder="Optional"
-            />
-          </div>
+          {[
+            { id: "coverUrl", label: "cover_url", placeholder: "optional", value: entry.coverUrl ?? "" },
+            { id: "title", label: "title", placeholder: "", value: entry.title ?? "" },
+            { id: "author", label: "author", placeholder: "optional", value: entry.author ?? "" },
+            { id: "url", label: "url", placeholder: "optional", value: entry.url ?? "" },
+          ].map(({ id, label, placeholder, value }) => (
+            <div key={id} className="flex items-center gap-3">
+              <label htmlFor={id} className="text-[11px] text-[#4b5563] w-24 shrink-0 tracking-wide">
+                {label}
+              </label>
+              <input
+                id={id}
+                name={id}
+                placeholder={placeholder}
+                defaultValue={value}
+                className="flex-1 bg-[#16171a] border border-[#2f3133] text-slate-200 text-xs px-2 py-1.5 focus:outline-none focus:border-green-400 placeholder:text-[#374151] transition-colors font-mono"
+              />
+            </div>
+          ))}
 
-          <div>
-            <Label htmlFor="title">Title</Label>
-            <input id="title"
-              name="title"
-              className="border border-grey-300 rounded p-1 w-full"
-              defaultValue={entry.title ?? ""}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="author">Author</Label>
-            <input id="author"
-              name="author"
-              className="border border-grey-300 rounded p-1 w-full"
-              defaultValue={entry.author ?? ""}
-              placeholder="Optional"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="url">URL</Label>
-            <input id="url"
-              name="url"
-              className="border border-grey-300 rounded p-1 w-full"
-              defaultValue={entry.url ?? ""}
-              placeholder="Optional"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="notes">Notes</Label>
+          {/* Notes */}
+          <div className="flex items-start gap-3">
+            <label htmlFor="notes" className="text-[11px] text-[#4b5563] w-24 shrink-0 tracking-wide pt-1.5">
+              notes
+            </label>
             <textarea
               id="notes"
               name="notes"
-              className="border border-gray-300 rounded p-3 w-full resize-none"
+              placeholder="optional"
+              rows={3}
               defaultValue={entry.notes ?? ""}
-              placeholder="Optional"
-              rows={4}
+              className="flex-1 bg-[#16171a] border border-[#2f3133] text-slate-200 text-xs px-2 py-1.5 focus:outline-none focus:border-green-400 placeholder:text-[#374151] resize-none transition-colors font-mono"
             />
           </div>
 
-          <div>
-            <Label htmlFor="category">Category</Label>
+          {/* Category */}
+          <div className="flex items-center gap-3">
+            <label className="text-[11px] text-[#4b5563] w-24 shrink-0 tracking-wide">category</label>
             <Select name="category" defaultValue={entry.category}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a category" />
+              <SelectTrigger className="flex-1 bg-[#16171a] border border-[#2f3133] text-slate-200 text-xs h-8 rounded-none focus:ring-0 focus:border-green-400 font-mono">
+                <SelectValue placeholder="select..." />
               </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Category</SelectLabel>
-                  <SelectItem value="FANFIC">Fanfic</SelectItem>
-                  <SelectItem value="NOVEL">Novel</SelectItem>
-                  <SelectItem value="BOOKMARK">Book mark</SelectItem>
-                  <SelectItem value="OTHER">Other</SelectItem>
-                </SelectGroup>
+              <SelectContent className="bg-[#1a1b1d] border border-[#2f3133] rounded-none font-mono">
+                <SelectItem value="FANFIC" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Fanfic</SelectItem>
+                <SelectItem value="NOVEL" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Novel</SelectItem>
+                <SelectItem value="MANGA" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Manga</SelectItem>
+                <SelectItem value="BOOKMARK" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Bookmark</SelectItem>
+                <SelectItem value="OTHER" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Other</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div>
-            <Label htmlFor="tags">Tags</Label>
+          {/* Tags */}
+          <div className="flex items-center gap-3">
+            <label htmlFor="tags" className="text-[11px] text-[#4b5563] w-24 shrink-0 tracking-wide">tags</label>
             <input
               id="tags"
               name="tags"
-              className="border border-gray-300 rounded p-1 w-full"
-              defaultValue={entry.tags.map(tag => tag.name).join(", ")}
               placeholder="action, romance, isekai"
+              defaultValue={entry.tags.map(t => t.name).join(", ")}
+              className="flex-1 bg-[#16171a] border border-[#2f3133] text-slate-200 text-xs px-2 py-1.5 focus:outline-none focus:border-green-400 placeholder:text-[#374151] transition-colors font-mono"
             />
           </div>
 
-          <div>
-            <Label htmlFor="status">Status (Optional)</Label>
+          {/* Status */}
+          <div className="flex items-center gap-3">
+            <label className="text-[11px] text-[#4b5563] w-24 shrink-0 tracking-wide">status</label>
             <Select name="status" defaultValue={entry.status}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Status" />
+              <SelectTrigger className="flex-1 bg-[#16171a] border border-[#2f3133] text-slate-200 text-xs h-8 rounded-none focus:ring-0 focus:border-green-400 font-mono">
+                <SelectValue placeholder="optional" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Status (Optional)</SelectLabel>
-                  <SelectItem value="READING">Reading</SelectItem>
-                  <SelectItem value="COMPLETED">Completed</SelectItem>
-                  <SelectItem value="DROPPED">Dropped</SelectItem>
-                  <SelectItem value="PLAN_TO_READ">Plan to read</SelectItem>
-                </SelectGroup>
+              <SelectContent className="bg-[#1a1b1d] border border-[#2f3133] rounded-none font-mono">
+                <SelectItem value="READING" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Reading</SelectItem>
+                <SelectItem value="COMPLETED" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Completed</SelectItem>
+                <SelectItem value="DROPPED" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Dropped</SelectItem>
+                <SelectItem value="PLAN_TO_READ" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Plan to read</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <DialogFooter className="w-full flex flex-row justify-between items-center">
+          {/* Footer — delete on left, cancel/save on right */}
+          <div className="border-t border-[#2f3133] pt-4 flex items-center justify-between">
             <AlertDelete id={entry.id} />
             <div className="flex gap-2">
               <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
+                <button className="font-mono text-xs text-[#6b7280] border border-[#2f3133] px-4 py-1.5 hover:border-[#6b7280] transition-colors">
+                  cancel
+                </button>
               </DialogClose>
-              <Button type="submit">Save changes</Button>
+              <button
+                type="submit"
+                className="font-mono text-xs text-[#1a1b1d] bg-green-400 border border-green-400 px-4 py-1.5 hover:bg-green-300 transition-colors"
+              >
+                save changes
+              </button>
             </div>
-          </DialogFooter>
+          </div>
 
         </form>
       </DialogContent>
-    </Dialog>
-  )
+    </Dialog>)
 }

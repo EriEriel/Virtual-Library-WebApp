@@ -36,7 +36,7 @@ export default function EntryCard({ entry }: { entry: EntryWithTags }) {
       <div className="p-3.5">
 
         {/* Cover + title row */}
-        <div className="flex gap-3 mt-7 mb-3 items-start">
+        <div className="flex gap-4 items-center justify-end mb-6">
           <div className="w-18 h-27 shrink-0 border border-[#3a3d40] bg-[#2f3133] overflow-hidden">
             <img
               src={entry.coverUrl ?? "/place_holder.png"}
