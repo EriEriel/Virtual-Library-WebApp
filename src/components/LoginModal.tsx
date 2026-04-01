@@ -71,7 +71,7 @@ export default function LoginModal() {
           </svg>
         </button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="bg-[#1a1b1d] border border-[#2f3133] rounded-none p-0 max-w-sm overflow-hidden">
         <DialogHeader>
           <DialogTitle />
         </DialogHeader>
