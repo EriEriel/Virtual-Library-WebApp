@@ -1,96 +1,116 @@
 "use client";
 
 import { Entry, Tag } from "@/generated/prisma/client";
-import { ExternalLink, UserStar } from "lucide-react"
+import { ExternalLink } from "lucide-react";
 import EditEntryModal from "./EditEntryModal";
 import { Star } from "./Icons";
 import { useState } from "react";
 import { toggleCurated } from "./actions";
 
-// Type alias of TypeScript because Tag is seperate table, 
-// So if we want to use tag[] array we also create new type that include both Entry and Tag together.
-// It just joining table under the hoods
-export type EntryWithTags = Entry & { tags: Tag[] }
+export type EntryWithTags = Entry & { tags: Tag[] };
+
+const statusStyles: Record<string, string> = {
+  COMPLETED: "bg-green-950 text-green-300 border-l border-b border-[#2f3133]",
+  READING: "bg-yellow-950 text-yellow-300 border-l border-b border-[#2f3133]",
+  PLAN_TO_READ: "bg-orange-950 text-orange-300 border-l border-b border-[#2f3133]",
+  DROPPED: "bg-zinc-800   text-zinc-400   border-l border-b border-[#2f3133]",
+};
 
 export default function EntryCard({ entry }: { entry: EntryWithTags }) {
-
-  const [curated, setCurated] = useState(entry.isCurated)
+  const [curated, setCurated] = useState(entry.isCurated);
 
   const handleCurate = async () => {
-    setCurated(!curated)
-    await toggleCurated(entry.id, !curated)
-  }
+    setCurated(!curated);
+    await toggleCurated(entry.id, !curated);
+  };
+
+  const badgeStyle = statusStyles[entry.status] ?? "bg-zinc-800 text-zinc-400";
 
   return (
-    <div
-      key={entry.id}
-      className="relative p-4 border border-[#1a1a1a] bg-[#1a1a1a] text-card-foreground shadow-sm transition-all hover:shadow-md">
-      <div className="mb-3">
-        <div className="text-sm text-right items-end justify-end">
-          {/* Status Badge */}
-          <span className={`absolute top-3 right-3 text-[10px] p-3 py-0.5 border font-semibold 
-    ${entry.status === "COMPLETED" ? "bg-green-400 text-green-50 border-green-400" :
-              entry.status === "READING" ? "bg-yellow-400 text-yellow-50 border-yellow-400" :
-                entry.status === "PLAN_TO_READ" ? "bg-orange-400 text-orange-50 border-orange-400" :
-                  entry.status === "DROPPED" ? "bg-gray-400 text-gray-50 border-gray-400" : "bg-zinc-500"}`}>
-            {entry.status.replace(/_/g, ' ')}
-          </span>
-        </div>
-      </div>
-      <div className="flex gap-2 mt-7">
-        <div className="flex items-start justify-items-start mb-10">
-          <img
-            src={entry.coverUrl ?? "/place_holder.png"}
-            alt={entry.title}
-            width={90}
-            height={135}
-          />
-        </div>
-        <div>
+    <div className="relative bg-[#1a1b1d] border border-[#2f3133] font-mono w-[280px]">
 
-          <div className="text-xl text-white truncate max-w-xs">
+      {/* Status badge — sharp corner, top-right */}
+      <span className={`absolute top-0 right-0 text-[10px] font-bold tracking-widest px-2 py-1 uppercase ${badgeStyle}`}>
+        {entry.status.replace(/_/g, " ")}
+      </span>
+
+      <div className="p-3.5">
+
+        {/* Cover + title row */}
+        <div className="flex gap-3 mt-7 mb-3 items-start">
+          <div className="w-[72px] h-[108px] flex-shrink-0 border border-[#3a3d40] bg-[#2f3133] overflow-hidden">
+            <img
+              src={entry.coverUrl ?? "/place_holder.png"}
+              alt={entry.title}
+              width={72}
+              height={108}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="flex-1 min-w-0 pt-0.5">
             <a
               href={entry.url ?? undefined}
               target="_blank"
               rel="noopener noreferrer"
-              className={entry.url ? "hover:bg-stone-500 text-white cursor-pointer flex item-center gap-1" : "cursor-default"}
+              className={`text-[13px] font-medium text-slate-200 flex items-center gap-1 mb-1 truncate
+                ${entry.url ? "hover:text-green-400 cursor-pointer" : "cursor-default"}`}
             >
-              {entry.title}
-              {entry.url && <ExternalLink className="w-3 h-3" />}
+              <span className="truncate">{entry.title}</span>
+              {entry.url && <ExternalLink className="w-2.5 h-2.5 flex-shrink-0 text-green-400" />}
             </a>
-          </div>
-          <div className="text-sm text-gray-500">
-            {entry.category}
+            <div className="text-[11px] text-green-400 tracking-wide mb-1">
+              // {entry.category}
+            </div>
           </div>
         </div>
-      </div>
 
-      <hr className="border-stone-400 h-0.5 mb-3" />
+        <hr className="border-[#2f3133] mb-2.5" />
 
-      <div className="text-sm text-gray-300">
-        // {entry.author}
-      </div>
-      <div className="flex flex-wrap gap-2 mt-2">
-        {entry.tags.map((tag) => (
-          <span key={tag.id} className="border px-2 py-0.5 text-xs text-gray-50 bg-gray-400 border-gray-400">#{tag.name}</span>
-        ))}
-      </div>
-      <div className="mt-2">
-        {entry.notes && (
-          <div key={entry.id}>
-            <p className="text-white">Note</p>
-            <p className="text-sm text-gray-300 pl-4">	{entry.notes}</p>
+        {/* Author */}
+        <div className="text-[11px] text-[#4b5563] mb-2">
+          // {entry.author}
+        </div>
+
+        {/* Tags */}
+        {entry.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-2.5">
+            {entry.tags.map((tag) => (
+              <span
+                key={tag.id}
+                className="text-[10px] text-[#9ca3af] bg-[#262729] border border-[#374151] px-1.5 py-px tracking-wide"
+              >
+                #{tag.name}
+              </span>
+            ))}
           </div>
         )}
-      </div>
-      <div className="flex items-center justify-end gap-2 mt-4 text-gray-300">
-        <div className="hover:text-white">
-          <EditEntryModal entry={entry} />
+
+        {/* Notes */}
+        {entry.notes && (
+          <div className="bg-[#16171a] border-l-2 border-green-400 px-2 py-1.5 mb-3">
+            <p className="text-[10px] text-green-400 tracking-widest mb-1 uppercase">Note</p>
+            <p className="text-[11px] text-[#6b7280] leading-relaxed">{entry.notes}</p>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#2f3133]">
+          <div className="border border-[#2f3133] hover:border-green-400 hover:text-green-400 text-[#6b7280] transition-colors">
+            <EditEntryModal entry={entry} />
+          </div>
+          <button
+            onClick={handleCurate}
+            className={`border p-1 transition-colors
+              ${curated
+                ? "border-[#713f12] text-yellow-400"
+                : "border-[#2f3133] text-[#6b7280] hover:border-yellow-400 hover:text-yellow-400"
+              }`}
+          >
+            <Star filled={curated} />
+          </button>
         </div>
-        <button onClick={handleCurate} className="text-gray-300 hover:text-yellow-400">
-          <Star filled={curated} />
-        </button>
+
       </div>
-    </div >
-  )
+    </div>
+  );
 }
