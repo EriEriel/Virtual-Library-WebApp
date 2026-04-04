@@ -7,6 +7,45 @@ import { Category, Status } from "@/generated/prisma/enums";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 
+// ─── Helper ────────────────────────────────────────────────────────────────
+
+/**
+ * Finds or creates the user's default shelf, and backfills any entries
+ * that have no shelfId onto it. Safe to call repeatedly — fast after first run.
+ */
+async function ensureDefaultShelf(userId: string): Promise<string> {
+  let defaultShelf = await prisma.shelf.findFirst({
+    where: { userId, isDefault: true },
+  });
+
+  if (!defaultShelf) {
+    // Get the current max order so the default shelf sorts last
+    const maxOrder = await prisma.shelf.aggregate({
+      where: { userId },
+      _max: { order: true },
+    });
+
+    defaultShelf = await prisma.shelf.create({
+      data: {
+        name: "My Shelf",
+        isDefault: true,
+        order: (maxOrder._max.order ?? -1) + 1,
+        userId,
+      },
+    });
+  }
+
+  // Backfill any entries not yet assigned to a shelf
+  await prisma.entry.updateMany({
+    where: { userId, shelfId: null },
+    data: { shelfId: defaultShelf.id },
+  });
+
+  return defaultShelf.id;
+}
+
+// ─── Entry Actions ──────────────────────────────────────────────────────────
+
 export async function addEntry(formData: FormData) {
 
   const session = await auth()
@@ -22,8 +61,11 @@ export async function addEntry(formData: FormData) {
   const url = formData.get("url") as string;
   const notes = formData.get("notes") as string;
   const tagsInput = formData.get("tags") as string;
+  const shelfId = formData.get("shelfId") as string;
 
   const tagNames = tagsInput ? tagsInput.split(",").map(t => t.trim()).filter(Boolean) : [];
+
+  const resolvedShelfId = shelfId || (await ensureDefaultShelf(userId));
 
   const entry = await prisma.entry.create({
     data: {
@@ -34,7 +76,8 @@ export async function addEntry(formData: FormData) {
       status: status || "READING",
       url: url || null,
       notes: notes || null,
-      userId: session.user.id,  // ← from session, not form
+      userId: session.user.id,
+      shelfId: resolvedShelfId,
       tags: {
         connectOrCreate: tagNames.map(name => ({
           where: { name },
@@ -75,11 +118,11 @@ export async function updateEntry(formData: FormData) {
   const url = formData.get("url") as string;
   const notes = formData.get("notes") as string;
   const tagsInput = formData.get("tags") as string;
+  const shelfId = formData.get("shelfId") as string;
   const tagNames = tagsInput ? tagsInput.split(",").map(t => t.trim()).filter(Boolean) : [];
 
   if (coverUrl !== existingCoverUrl && existingPublicId) {
     await cloudinary.uploader.destroy(existingPublicId);
-
     if (!coverUrl) {
       await prisma.image.delete({ where: { entryId: id } });
     }
@@ -95,6 +138,7 @@ export async function updateEntry(formData: FormData) {
       ...(category && { category }),
       ...(status && { status }),
       ...(notes && { notes }),
+      ...(shelfId && { shelfId }),
       tags: {
         // Wiped connection with set: [] and than reconnect with existing tags 
         set: [],
