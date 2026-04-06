@@ -32,7 +32,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
 
           <StatusHeader />
 
-
           {/* Big Data Visualizations */}
           <MetricGrid />
 

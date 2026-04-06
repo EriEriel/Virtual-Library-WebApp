@@ -1,5 +1,6 @@
 "use server";
 
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 import cloudinary from "@/lib/cloudinary";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
@@ -18,28 +19,34 @@ async function ensureDefaultShelf(userId: string): Promise<string> {
     where: { userId, isDefault: true },
   });
 
-  if (!defaultShelf) {
-    // Get the current max order so the default shelf sorts last
-    const maxOrder = await prisma.shelf.aggregate({
-      where: { userId },
-      _max: { order: true },
-    });
+  try {
+    if (!defaultShelf) {
+      // Get the current max order so the default shelf sorts last
+      const maxOrder = await prisma.shelf.aggregate({
+        where: { userId },
+        _max: { order: true },
+      });
 
-    defaultShelf = await prisma.shelf.create({
-      data: {
-        name: "My Shelf",
-        isDefault: true,
-        order: (maxOrder._max.order ?? -1) + 1,
-        userId,
-      },
+      defaultShelf = await prisma.shelf.create({
+        data: {
+          name: "My Shelf",
+          isDefault: true,
+          order: (maxOrder._max.order ?? -1) + 1,
+          userId,
+        },
+      });
+    }
+
+    // Backfill any entries not yet assigned to a shelf
+    await prisma.entry.updateMany({
+      where: { userId, shelfId: null },
+      data: { shelfId: defaultShelf.id },
     });
+  } catch (err) {
+    if (isRedirectError(err)) throw err;
+    console.error("[ensureDefaultShelf]", err);
+    throw err;
   }
-
-  // Backfill any entries not yet assigned to a shelf
-  await prisma.entry.updateMany({
-    where: { userId, shelfId: null },
-    data: { shelfId: defaultShelf.id },
-  });
 
   return defaultShelf.id;
 }
@@ -65,37 +72,43 @@ export async function addEntry(formData: FormData) {
 
   const tagNames = tagsInput ? tagsInput.split(",").map(t => t.trim()).filter(Boolean) : [];
 
-  const resolvedShelfId = shelfId || (await ensureDefaultShelf(userId));
+  try {
+    const resolvedShelfId = shelfId || (await ensureDefaultShelf(userId));
 
-  const entry = await prisma.entry.create({
-    data: {
-      title,
-      coverUrl: coverUrl || null,
-      author: author || null,
-      category: category || "OTHER",
-      status: status || "READING",
-      url: url || null,
-      notes: notes || null,
-      userId: session.user.id,
-      shelfId: resolvedShelfId,
-      tags: {
-        connectOrCreate: tagNames.map(name => ({
-          where: { name },
-          create: { name },
-        }))
-      },
-    }
-  });
-
-  if (coverUrl && publicId) {
-    await prisma.image.create({
+    const entry = await prisma.entry.create({
       data: {
-        url: coverUrl,
-        publicId,
-        entryId: entry.id,
-        userId,
+        title,
+        coverUrl: coverUrl || null,
+        author: author || null,
+        category: category || "OTHER",
+        status: status || "READING",
+        url: url || null,
+        notes: notes || null,
+        userId: session.user.id,
+        shelfId: resolvedShelfId,
+        tags: {
+          connectOrCreate: tagNames.map(name => ({
+            where: { name },
+            create: { name },
+          }))
+        },
       }
-    })
+    });
+
+    if (coverUrl && publicId) {
+      await prisma.image.create({
+        data: {
+          url: coverUrl,
+          publicId,
+          entryId: entry.id,
+          userId,
+        }
+      })
+    }
+  } catch (err) {
+    if (isRedirectError(err)) throw err;
+    console.error("[addEntry]", err);
+    throw err;
   }
 
   redirect("/");
@@ -121,43 +134,48 @@ export async function updateEntry(formData: FormData) {
   const shelfId = formData.get("shelfId") as string;
   const tagNames = tagsInput ? tagsInput.split(",").map(t => t.trim()).filter(Boolean) : [];
 
-  if (coverUrl !== existingCoverUrl && existingPublicId) {
-    await cloudinary.uploader.destroy(existingPublicId);
-    if (!coverUrl) {
-      await prisma.image.delete({ where: { entryId: id } });
-    }
-  }
-
-  const entry = await prisma.entry.update({
-    where: { id },
-    data: {
-      title,
-      coverUrl: coverUrl || null,
-      ...(author && { author }),
-      ...(url && { url }),
-      ...(category && { category }),
-      ...(status && { status }),
-      ...(notes && { notes }),
-      ...(shelfId && { shelfId }),
-      tags: {
-        // Wiped connection with set: [] and than reconnect with existing tags 
-        set: [],
-        connectOrCreate: tagNames.map(name => ({
-          where: { name },
-          create: { name },
-        }))
+  try {
+    if (coverUrl !== existingCoverUrl && existingPublicId) {
+      await cloudinary.uploader.destroy(existingPublicId);
+      if (!coverUrl) {
+        await prisma.image.delete({ where: { entryId: id } });
       }
     }
-  });
 
-  if (coverUrl && publicId) {
-    await prisma.image.upsert({
-      where: { entryId: id },
-      update: { url: coverUrl, publicId },
-      create: { url: coverUrl, publicId, entryId: id, userId },
-    })
+    await prisma.entry.update({
+      where: { id },
+      data: {
+        title,
+        coverUrl: coverUrl || null,
+        ...(author && { author }),
+        ...(url && { url }),
+        ...(category && { category }),
+        ...(status && { status }),
+        ...(notes && { notes }),
+        ...(shelfId && { shelfId }),
+        tags: {
+          // Wiped connection with set: [] and than reconnect with existing tags 
+          set: [],
+          connectOrCreate: tagNames.map(name => ({
+            where: { name },
+            create: { name },
+          }))
+        }
+      }
+    });
+
+    if (coverUrl && publicId) {
+      await prisma.image.upsert({
+        where: { entryId: id },
+        update: { url: coverUrl, publicId },
+        create: { url: coverUrl, publicId, entryId: id, userId },
+      })
+    }
+  } catch (err) {
+    if (isRedirectError(err)) throw err;   // redirect passthrough
+    console.error("[EditEntry]", err);
+    throw err;
   }
-
   redirect("/");
 }
 
@@ -165,18 +183,24 @@ export async function updateEntry(formData: FormData) {
 export async function deleteEntry(formData: FormData) {
   const id = formData.get("id") as string;
 
-  const image = await prisma.image.findUnique({
-    where: { entryId: id }
-  });
+  try {
+    const image = await prisma.image.findUnique({
+      where: { entryId: id }
+    });
 
-  // delete from Cloudinary if image exists
-  if (image?.publicId) {
-    await cloudinary.uploader.destroy(image.publicId);
+    // delete from Cloudinary if image exists
+    if (image?.publicId) {
+      await cloudinary.uploader.destroy(image.publicId);
+    }
+
+    await prisma.entry.delete({
+      where: { id },
+    });
+  } catch (err) {
+    if (isRedirectError(err)) throw err;
+    console.error("[deleteEntry]", err);
+    throw err;
   }
-
-  await prisma.entry.delete({
-    where: { id },
-  });
 
   redirect("/");
 }
@@ -197,12 +221,18 @@ export async function imageUpload(formData: FormData) {
   const url = formData.get("url") as string
   const publicId = formData.get("publicId") as string
 
-  await prisma.image.create({
-    data: {
-      url,
-      publicId,
-      userId,
-      entryId,
-    }
-  });
+  try {
+    await prisma.image.create({
+      data: {
+        url,
+        publicId,
+        userId,
+        entryId,
+      }
+    });
+  } catch (err) {
+    if (isRedirectError(err)) throw err;
+    console.error("[imageUpload]", err);
+    throw err;
+  }
 }
