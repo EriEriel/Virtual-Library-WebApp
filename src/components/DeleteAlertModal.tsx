@@ -16,7 +16,7 @@ import { deleteEntry } from "./actions";
 
 export function AlertDelete({ id }: { id: string }) {
   return (
-    <AlertDialog>
+    <AlertDialog modal={false}>
       <AlertDialogTrigger asChild>
         <button className="flex items-center gap-1.5 font-mono text-xs text-red-500 border border-[#2f3133] px-2 py-1.5 hover:border-red-500 transition-colors cursor-pointer">
           <Trash2 className="w-3 h-3" />

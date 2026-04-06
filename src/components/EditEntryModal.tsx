@@ -30,7 +30,7 @@ export default function EditEntryModal({ entry }: { entry: EntryWithTags }) {
 
 
   return (
-    <Dialog>
+    <Dialog modal={false}>
       <DialogTrigger asChild>
         <button className="flex items-center gap-1.5 font-mono text-xs text-[#6b7280] border border-[#2f3133] px-2 py-1 hover:border-green-400 hover:text-green-400 transition-colors cursor-pointer">
           <Pencil className="w-3 h-3" />
@@ -106,7 +106,7 @@ export default function EditEntryModal({ entry }: { entry: EntryWithTags }) {
           {/* Category */}
           <div className="flex items-center gap-3">
             <label className="text-[11px] text-[#4b5563] w-24 shrink-0 tracking-wide">category</label>
-            <Select name="category" defaultValue={entry.category}>
+            <Select name="category" defaultValue={entry.category} modal={false}>
               <SelectTrigger className="flex-1 bg-[#16171a] border border-[#2f3133] text-slate-200 text-xs h-8 rounded-none focus:ring-0 focus:border-green-400 font-mono">
                 <SelectValue placeholder="select..." />
               </SelectTrigger>
@@ -134,7 +134,7 @@ export default function EditEntryModal({ entry }: { entry: EntryWithTags }) {
           {/* Status */}
           <div className="flex items-center gap-3">
             <label className="text-[11px] text-[#4b5563] w-24 shrink-0 tracking-wide">status</label>
-            <Select name="status" defaultValue={entry.status}>
+            <Select name="status" defaultValue={entry.status} modal={false}>
               <SelectTrigger className="flex-1 bg-[#16171a] border border-[#2f3133] text-slate-200 text-xs h-8 rounded-none focus:ring-0 focus:border-green-400 font-mono">
                 <SelectValue placeholder="optional" />
               </SelectTrigger>

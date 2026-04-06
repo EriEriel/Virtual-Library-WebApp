@@ -27,7 +27,7 @@ export default function AddEntryModal() {
 
   return (
     <div>
-      <Dialog>
+      <Dialog modal={false}>
         <DialogTrigger asChild>
           <button className="font-mono text-sm text-green-400 border border-green-400 px-4 h-9 hover:bg-green-400 hover:text-[#1a1b1d] transition-colors cursor-pointer tracking-widest uppercase">
             + Add Entry
@@ -95,7 +95,7 @@ export default function AddEntryModal() {
             {/* Category */}
             <div className="flex items-center gap-3">
               <label className="text-[11px] text-[#4b5563] w-24 shrink-0 tracking-wide">category</label>
-              <Select name="category">
+              <Select name="category" modal={false}>
                 <SelectTrigger className="flex-1 bg-[#16171a] border border-[#2f3133] text-slate-200 text-xs h-8 rounded-none focus:ring-0 focus:border-green-400 font-mono">
                   <SelectValue placeholder="select..." />
                 </SelectTrigger>
@@ -123,7 +123,7 @@ export default function AddEntryModal() {
             {/* Status */}
             <div className="flex items-center gap-3">
               <label className="text-[11px] text-[#4b5563] w-24 shrink-0 tracking-wide">status</label>
-              <Select name="status">
+              <Select name="status" modal={false}>
                 <SelectTrigger className="flex-1 bg-[#16171a] border border-[#2f3133] text-slate-200 text-xs h-8 rounded-none focus:ring-0 focus:border-green-400 font-mono">
                   <SelectValue placeholder="optional" />
                 </SelectTrigger>

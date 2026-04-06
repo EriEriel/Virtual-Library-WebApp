@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { SearchBar } from "@/components/SearchBar";
 import AddEntryModal from "@/components/AddEntryModal";
+import { AddShelfDropdown } from "@/components/AddShelvesDropdown";
 
 async function getUserEntries(userId: string, search: string = "") {
   return await prisma.entry.findMany({
@@ -34,12 +35,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
   const entries = await getUserEntries(session.user.id, search);
 
   return (
-    <main className="bg-[#1a1b1d]">
+    <div className="bg-[#1a1b1d]">
       <div className="ml-64 mr-64 py-10 px-4 mt-10 bg-[#202123] min-h-screen">
 
         <div className="flex gap-4 items-center justify-end">
           {session && <SearchBar />}
           {session && <AddEntryModal />}
+          {session && <AddShelfDropdown />}
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-5">
@@ -58,6 +60,6 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
           )}
         </div>
       </div>
-    </main>
+    </div>
   );
 }

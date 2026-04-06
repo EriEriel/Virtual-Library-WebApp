@@ -55,7 +55,7 @@ export default function LoginModal() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         {/* Login Icon (Clean SVG) */}
         <button className="text-gray-50 hover:text-white transition-colors cursor-pointer focus:outline-none">

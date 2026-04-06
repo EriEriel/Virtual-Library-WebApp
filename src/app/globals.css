@@ -209,28 +209,3 @@
   }
 }
 
-/* Custom CSS utilities (Blinking Cursor, etc) */
-@layer utilities {
-  .terminal-cursor::after {
-    content: "";
-    display: inline-block;
-    width: 2px;
-    height: 1.2em;
-    background-color: currentColor;
-    margin-left: 4px;
-    vertical-align: middle;
-    animation: blink 1s step-end infinite;
-  }
-
-  @keyframes blink {
-
-    from,
-    to {
-      opacity: 1;
-    }
-
-    50% {
-      opacity: 0;
-    }
-  }
-}
