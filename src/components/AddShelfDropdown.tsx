@@ -68,31 +68,23 @@ export function AddShelfDropdown({ shelves = [] }: AddShelfDropdown) {
             {shelves.map((shelf) => (
               <DropdownMenuItem
                 key={shelf.id}
-                className="font-mono text-xs text-[#9ca3af] flex justify-between cursor-pointer hover:text-green-400"
+                className="font-mono text-xs text-[#9ca3af] flex items-center gap-2 cursor-pointer hover:text-green-400"
                 onSelect={() => selectShelf(shelf.id)}
               >
-                <span>{shelf.name}</span>
-                <span className="text-[#4b5563]">({shelf._count.entries})</span>
-
+                <span className="truncate min-w-0 flex-1">{shelf.name}</span>
+                <span className="text-[#4b5563] shrink-0">({shelf._count.entries})</span>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();   // don't trigger onSelect
-                    setOpen(false);        // close dropdown first
-                    setRenameShelf(shelf); // set which shelf to rename
-                  }}
+                  className="shrink-0"
+                  onClick={(e) => { e.stopPropagation(); setOpen(false); setRenameShelf(shelf); }}
                 >
                   rename
                 </button>
-
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(shelf.id);
-                  }}
+                  className="shrink-0"
+                  onClick={(e) => { e.stopPropagation(); handleDelete(shelf.id); }}
                 >
                   delete
                 </button>
-
               </DropdownMenuItem>
             ))}
           </DropdownMenuGroup>
