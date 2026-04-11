@@ -12,9 +12,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Trash2 } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { deleteEntry } from "./actions";
 
 export function AlertDelete({ id }: { id: string }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const queryString = searchParams.toString();
+  const currentPath = queryString ? `${pathname}?${queryString}` : pathname;
+
   return (
     <AlertDialog modal={false}>
       <AlertDialogTrigger asChild>
@@ -37,6 +43,8 @@ export function AlertDelete({ id }: { id: string }) {
 
         <form action={deleteEntry}>
           <input type="hidden" name="id" value={id} />
+          <input type="hidden" name="currentPath" value={currentPath} />
+
           <AlertDialogFooter className="pt-4 flex gap-2 justify-end">
             <AlertDialogCancel className="font-mono text-xs text-[#6b7280] border border-[#2f3133] bg-transparent rounded-none px-4 py-1.5 hover:border-[#6b7280] hover:bg-transparent hover:text-white transition-colors">
               cancel

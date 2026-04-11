@@ -1,35 +1,98 @@
-import { Memory, Hub, Analytics } from '@/components/Icons';
+import { prisma } from "@/lib/prisma";
+import Image from "next/image";
+import Link from "next/link";
 
-export default function BentoGrid() {
-  const logs = [
-    { time: "14:02:11", msg: "Sync_Request: Accepted" },
-    { time: "13:58:04", msg: "Buffer_Overflow: Resolved" },
-    { time: "13:42:55", msg: "Encryption_Handshake: OK" },
-  ];
+export const revalidate = 3600;
+
+const logs = [
+  { time: "14:02:11", msg: "Sync_Request: Accepted" },
+  { time: "13:58:04", msg: "Buffer_Overflow: Resolved" },
+  { time: "13:42:55", msg: "Encryption_Handshake: OK" },
+];
+
+export default async function BentoGrid() {
+  // Count total then pick a random offset — Prisma has no native random()
+  const count = await prisma.entry.count();
+  const randomSkip = count > 0 ? Math.floor(Math.random() * count) : 0;
+
+  const entry = count > 0
+    ? await prisma.entry.findFirst({
+      skip: randomSkip,
+      include: {
+        shelf: true,
+        image: true,
+      },
+    })
+    : null;
 
   return (
     <section className="grid grid-cols-12 gap-6">
       {/* Large Card */}
-      <div className="col-span-12 md:col-span-8 bg-[#1a1a1a] p-8 flex flex-col justify-between min-h-[100]">
+      <div className="col-span-12 md:col-span-8 bg-[#1a1a1a] p-8 flex flex-col justify-between min-h-[280px]">
         <div>
           <div className="flex justify-between items-start mb-12">
-            <div className="font-mono text-xs text-gray-500 uppercase tracking-widest">Index // Core_Node_01</div>
+            <div className="font-mono text-xs text-gray-500 uppercase tracking-widest">
+              {entry ? `Shelf // ${entry.shelf?.name ?? "Unshelved"}` : "Index // Core_Node_01"}
+            </div>
             <span className="text-white">●</span>
           </div>
-          <h3 className="text-4xl font-bold tracking-tight mb-4">Recursive Library Mapping</h3>
-          <p className="text-gray-400 max-w-md text-sm leading-relaxed">
-            Automatic indexing of sub-sector binaries initialized. System parsing 4.2TB of metadata.
-          </p>
+
+          {entry ? (
+            <div className="flex gap-6">
+              {/* Cover image if exists */}
+              {entry.image?.url && (
+                <div className="shrink-0 w-24 h-32 relative border border-white/10 overflow-hidden">
+                  <Image
+                    src={entry.image.url}
+                    alt={entry.title}
+                    fill
+                    className="object-cover grayscale"
+                  />
+                </div>
+              )}
+              <div className="flex flex-col gap-3">
+                <div className="font-mono text-[10px] text-gray-500 uppercase tracking-widest">
+                  {entry.type} &nbsp;·&nbsp; {entry.status.replace("_", " ")}
+                </div>
+                <h3 className="text-4xl font-bold tracking-tight">{entry.title}</h3>
+                {entry.notes && (
+                  <p className="text-gray-400 max-w-md text-sm leading-relaxed line-clamp-2">
+                    {entry.notes}
+                  </p>
+                )}
+              </div>
+            </div>
+          ) : (
+            /* Fallback when DB is empty */
+            <>
+              <h3 className="text-4xl font-bold tracking-tight mb-4">
+                Your Library. Indexed.
+              </h3>
+              <p className="text-gray-400 max-w-md text-sm leading-relaxed">
+                Track everything you read, watch, and play. Organized into shelves, built for the terminal-minded.
+              </p>
+            </>
+          )}
         </div>
-        <div className="flex gap-4">
-          <button className="px-6 py-2 bg-white text-black text-[10px] font-mono uppercase font-bold hover:bg-white transition-colors">Details</button>
-          <button className="px-6 py-2 border border-gray-700 text-white text-[10px] font-mono uppercase hover:bg-white/10 transition-colors">Execute</button>
+
+        <div className="flex gap-4 mt-8">
+          <div className="px-6 py-2 bg-white/10 text-white/30 text-[10px] font-mono uppercase font-bold cursor-not-allowed select-none">
+            {entry ? entry.status.replace("_", " ") : "Browse"}
+          </div>
+          <Link
+            href="/login"
+            className="px-6 py-2 border border-gray-700 text-white text-[10px] font-mono uppercase hover:bg-white/10 transition-colors"
+          >
+            Sign In →
+          </Link>
         </div>
       </div>
 
       {/* Log Card */}
       <div className="col-span-12 md:col-span-4 bg-[#1e1e1e] p-8 border-l border-white/5">
-        <div className="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-8">Active_Log</div>
+        <div className="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-8">
+          Active_Log
+        </div>
         <div className="space-y-6">
           {logs.map((log, i) => (
             <div key={i} className="flex flex-col">
@@ -39,8 +102,7 @@ export default function BentoGrid() {
           ))}
         </div>
       </div>
-
-      {/* Small Stat Cards... (continued with similar logic) */}
     </section>
   );
 }
+

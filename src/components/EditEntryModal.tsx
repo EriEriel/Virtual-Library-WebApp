@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { AlertDelete } from "./DeleteAlertModal";
 import { updateEntry } from "./actions";
 import { Pencil } from "lucide-react";
@@ -28,6 +29,10 @@ export default function EditEntryModal({ entry }: { entry: EntryWithTags }) {
   const [coverUrl, setCoverUrl] = useState(entry.coverUrl ?? "");
   const [publicId, setPublicId] = useState(entry.image?.publicId ?? "");
 
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const queryString = searchParams.toString();
+  const currentPath = queryString ? `${pathname}?${queryString}` : pathname;
 
   return (
     <Dialog modal={false}>
@@ -52,6 +57,7 @@ export default function EditEntryModal({ entry }: { entry: EntryWithTags }) {
 
           <input type="hidden" name="coverUrl" value={coverUrl} />
           <input type="hidden" name="publicId" value={publicId} />
+          <input type="hidden" name="currentPath" value={currentPath} />
 
           <input type="hidden" name="existingCoverUrl" value={entry.coverUrl ?? ""} />
           <input type="hidden" name="existingPublicId" value={entry.image?.publicId ?? ""} />

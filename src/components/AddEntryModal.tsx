@@ -30,9 +30,8 @@ export default function AddEntryModal() {
   const activeShelfId = searchParams.get("shelf") ?? "";
 
   const pathname = usePathname();
-  const currentPath = searchParams.get("shelf")
-    ? `${pathname}?shelf=${searchParams.get("shelf")}`
-    : pathname;
+  const queryString = searchParams.toString();
+  const currentPath = queryString ? `${pathname}?${queryString}` : pathname;
 
   return (
     <div>

@@ -30,7 +30,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="h-140 bg-[#202123] flex items-center justify-center px-4 font-mono">
+    <div className="mt-30 h-140 bg-[#202123] flex items-center justify-center px-4 font-mono">
       <div className="w-full max-w-sm">
 
         {/* Header */}
