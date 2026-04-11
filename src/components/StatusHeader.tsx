@@ -9,7 +9,7 @@ interface StatusHeaderProps {
 
 export default function StatusHeader({
   status = "Online",
-  title = "Virtual Shelf Index"
+  title = "Terminal Shelf Index"
 }: StatusHeaderProps) {
   return (
     <section className="mb-20">
@@ -26,19 +26,6 @@ export default function StatusHeader({
         {title}
         <span className="ml-1 w-[2.2] h-[1.2em] bg-white animate-pulse opacity-5 inline-block" aria-hidden="true" />
       </h1>
-
-      <style>{`
-        /* Optional: If you want a more 'retro' block cursor effect */
-        .terminal-cursor {
-          display: inline-block;
-          animation: blink 1s step-end infinite;
-        }
-
-        @keyframes blink {
-          from, to { opacity: 1; }
-          50% { opacity: 0; }
-        }
-      `}</style>
     </section>
   );
 }
