@@ -20,7 +20,7 @@ export default function LoginModal() {
 
   if (session) {
     return (
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         {session.user?.image ? (
           <Image
             src={session.user.image}
@@ -34,7 +34,7 @@ export default function LoginModal() {
             {session.user?.name?.[0]?.toUpperCase()}
           </div>
         )}
-        <span className="font-mono text-white text-sm font-medium">{session.user?.name}</span>
+        <span className="hidden sm:inline font-mono text-white text-sm font-medium">{session.user?.name}</span>
         {/* Logout Icon (Clean SVG) */}
         <button
           className="text-gray-50 hover:text-white transition-colors cursor-pointer focus:outline-none"

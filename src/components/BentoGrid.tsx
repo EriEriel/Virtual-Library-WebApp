@@ -102,15 +102,15 @@ export default async function BentoGrid() {
       </div>
 
       {/* Log Card */}
-      <div className="col-span-12 md:col-span-4 bg-[#1e1e1e] p-8 border-l border-white/5">
+      <div className="col-span-12 md:col-span-4 bg-[#1e1e1e] p-8 border-t md:border-t-0 md:border-l border-white/5">
         <div className="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-8">
           Active_Log
         </div>
         <div className="space-y-6">
           {logs.map((log, i) => (
-            <div key={i} className="flex flex-col">
+            <div key={i} className="flex flex-col min-w-0">
               <span className="text-xs text-white font-mono">{log.time}</span>
-              <span className="text-xs text-gray-400 font-mono uppercase">{log.msg}</span>
+              <span className="text-xs text-gray-400 font-mono uppercase break-words">{log.msg}</span>
             </div>
           ))}
         </div>

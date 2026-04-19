@@ -16,11 +16,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-interface AddShelfDropdown {
+interface AddShelfDropdownProps {
   shelves?: Shelf[];  // ← ? makes it optional
+  className?: string;
 }
 
-export function AddShelfDropdown({ shelves = [] }: AddShelfDropdown) {
+export function AddShelfDropdown({ shelves = [], className }: AddShelfDropdownProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -39,11 +40,11 @@ export function AddShelfDropdown({ shelves = [] }: AddShelfDropdown) {
   }
 
   return (
-    <>
+    <div className={className}>
       <DropdownMenu modal={false} open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <button
-            className="font-mono text-sm text-green-400 border border-green-400 px-4 h-9 bg-[#252628] hover:bg-green-400 hover:text-[#1a1b1d] active:bg-[#252628] active:text-green-400 transition-colors cursor-pointer tracking-widest uppercase flex items-center gap-2"
+            className="w-full font-mono text-sm text-green-400 border border-green-400 px-4 h-9 bg-[#252628] hover:bg-green-400 hover:text-[#1a1b1d] active:bg-[#252628] active:text-green-400 transition-colors cursor-pointer tracking-widest uppercase flex items-center justify-center gap-2"
           >
             <span>Manage Shelves</span>
             <span className="text-[10px]">{open ? "▲" : "▼"}</span>
@@ -116,6 +117,6 @@ export function AddShelfDropdown({ shelves = [] }: AddShelfDropdown) {
           onOpenChange={(open) => { if (!open) setRenameShelf(null); }}
         />
       )}
-    </>
+    </div>
   );
 }

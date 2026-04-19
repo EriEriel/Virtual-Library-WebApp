@@ -10,7 +10,7 @@ export default function StatusHeader({
   title = "Terminal Shelf Index"
 }: StatusHeaderProps) {
   return (
-    <section className="mb-20">
+    <section className="mb-12 sm:mb-20">
       {/* Status Bar */}
       <div className="flex items-baseline gap-4 mb-2">
         <span className="text-xs font-mono text-gray-500 tracking-[0.2em] uppercase">
@@ -20,9 +20,9 @@ export default function StatusHeader({
       </div>
 
       {/* Main Title with Terminal Cursor */}
-      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-white flex items-center">
+      <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter text-white flex items-center">
         {title}
-        <span className="ml-1 w-[2.2] h-[1.2em] bg-white animate-pulse opacity-5 inline-block" aria-hidden="true" />
+        <span className="ml-1 w-0.5 h-[1.2em] bg-white animate-pulse opacity-5 inline-block" aria-hidden="true" />
       </h1>
     </section>
   );

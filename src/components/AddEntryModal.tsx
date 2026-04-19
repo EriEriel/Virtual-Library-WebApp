@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-export default function AddEntryModal() {
+export default function AddEntryModal({ className }: { className?: string }) {
 
   const [coverUrl, setCoverUrl] = useState("");
   const [publicId, setPublicId] = useState("");
@@ -34,10 +34,10 @@ export default function AddEntryModal() {
   const currentPath = queryString ? `${pathname}?${queryString}` : pathname;
 
   return (
-    <div>
+    <div className={className}>
       <Dialog modal={false}>
         <DialogTrigger asChild>
-          <button className="font-mono text-sm text-green-400 border border-green-400 px-4 h-9 hover:bg-green-400 hover:text-[#1a1b1d] transition-colors cursor-pointer tracking-widest uppercase">
+          <button className="w-full font-mono text-sm text-green-400 border border-green-400 px-4 h-9 hover:bg-green-400 hover:text-[#1a1b1d] transition-colors cursor-pointer tracking-widest uppercase">
             + Add Entry
           </button>
         </DialogTrigger>
@@ -48,7 +48,7 @@ export default function AddEntryModal() {
               $ new entry
             </DialogTitle>
             <DialogDescription className="text-[#4b5563] text-xs">
-          // Insert your favourite material here
+              {"// Insert your favourite material here"}
             </DialogDescription>
           </DialogHeader>
 

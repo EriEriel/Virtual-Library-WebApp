@@ -35,16 +35,22 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ s
 
   return (
     <main className="bg-[#1a1b1d]">
-      <div className="mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64 pt-24 px-12 pb-12 min-h-screen bg-[#202123] text-white"> <div className="flex gap-4 items-center justify-end">
-        {session && <SearchBar />}
-        {session && <AddEntryModal />}
-      </div>
+      <div className="mx-0 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-64 pt-24 px-6 sm:px-12 pb-12 min-h-screen bg-[#202123] text-white">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="font-mono font-bold text-sm text-green-400 h-9 transition-colors tracking-widest uppercase flex items-center border-l-2 border-green-400 pl-4">
+            Shelf: curated_archive
+          </h1>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+            {session && <SearchBar className="w-full sm:w-auto" />}
+            {session && <AddEntryModal className="w-full sm:w-auto" />}
+          </div>
+        </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-5">
           {entries.length === 0 ? (
             <div className="col-span-full flex flex-col items-center justify-center py-32 text-center font-mono">
               <div className="text-[#2f3133] text-6xl mb-4">[]</div>
-              <p className="text-[11px] text-[#4b5563] tracking-widest mb-1">// shelf is empty</p>
+              <p className="text-[11px] text-[#4b5563] tracking-widest mb-1">{"// shelf is empty"}</p>
               <p className="text-[#374151] text-xs">no entries found. add one to get started.</p>
             </div>
           ) : (

@@ -14,7 +14,7 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full border-none bg-stone-950">
       {/* Main bar */}
-      <div className="flex h-16 items-center px-8">
+      <div className="flex h-16 items-center px-6 sm:px-8">
         {/* Logo */}
         <div className="font-mono flex-1 text-xl font-black tracking-widest text-white">
           <Link href="/">TERMINAL_SHELF</Link>
@@ -62,7 +62,7 @@ export default function Header() {
 
       {/* Mobile dropdown */}
       {menuOpen && (
-        <nav className="md:hidden border-t border-[#2f3133] bg-stone-950 px-8 py-4 flex flex-col gap-4">
+        <nav className="md:hidden border-t border-[#2f3133] bg-stone-950 px-6 sm:px-8 py-4 flex flex-col gap-4">
           {["/curated", "/archive", "/docs"].map((href) => (
             <Link
               key={href}
