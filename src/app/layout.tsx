@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Virtual Shelf",
+  title: "Terminal_shelf",
   description: "Manage your own online archive!!",
 };
 

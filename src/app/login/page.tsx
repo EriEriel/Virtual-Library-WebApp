@@ -30,19 +30,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="h-140 bg-[#202123] flex items-center justify-center px-4 font-mono">
+    <div className="min-h-screen bg-[#202123] flex items-center justify-center px-4 font-mono py-12">
       <div className="w-full max-w-sm">
 
         {/* Header */}
         <div className="mb-8 border-b border-[#2f3133] pb-6">
-          <div className="text-[11px] text-[#4b5563] tracking-widest mb-4">
+          <div className="text-[11px] text-[#4b5563] tracking-widest mb-4 uppercase">
             STATUS // ONLINE
           </div>
           <h1 className="text-xl font-bold text-white tracking-widest uppercase">
             TERMINAL_SHELF
           </h1>
           <p className="text-xs text-[#4b5563] mt-1">
-        // authenticate to access your collection
+            {"// authenticate to access your collection"}
           </p>
         </div>
 
@@ -51,37 +51,37 @@ export default function LoginPage() {
           <button
             onClick={() => handleOAuth("github")}
             disabled={!!loading}
-            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-[#1a1b1d] text-slate-200 text-xs border border-[#2f3133] hover:border-green-400 hover:text-green-400 transition-colors disabled:opacity-50 cursor-pointer tracking-wide"
+            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-[#1a1b1d] text-slate-200 text-xs border border-[#2f3133] hover:border-green-400 hover:text-green-400 transition-colors disabled:opacity-50 cursor-pointer tracking-widest uppercase"
           >
             {loading === "github" ? <Spinner light /> : <GitHubIcon />}
-            continue with github
+            continue_with_github
           </button>
 
           <button
             onClick={() => handleOAuth("google")}
             disabled={!!loading}
-            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-[#1a1b1d] text-slate-200 text-xs border border-[#2f3133] hover:border-green-400 hover:text-green-400 transition-colors disabled:opacity-50 cursor-pointer tracking-wide"
+            className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-[#1a1b1d] text-slate-200 text-xs border border-[#2f3133] hover:border-green-400 hover:text-green-400 transition-colors disabled:opacity-50 cursor-pointer tracking-widest uppercase"
           >
             {loading === "google" ? <Spinner light /> : <GoogleIcon />}
-            continue with google
+            continue_with_google
           </button>
         </div>
 
         {/* Divider */}
         <div className="flex items-center gap-3 mb-6">
           <div className="flex-1 h-px bg-[#2f3133]" />
-          <span className="text-[10px] text-[#4b5563] tracking-widest">or</span>
+          <span className="text-[10px] text-[#4b5563] tracking-widest">OR</span>
           <div className="flex-1 h-px bg-[#2f3133]" />
         </div>
 
         {/* Credentials Form */}
-        <form onSubmit={handleCredentials} className="space-y-3">
+        <form onSubmit={handleCredentials} className="space-y-4">
           {[
             { id: "email", label: "email", type: "email", placeholder: "you@example.com", value: email, setter: setEmail },
             { id: "password", label: "password", type: "password", placeholder: "••••••••", value: password, setter: setPassword },
           ].map(({ id, label, type, placeholder, value, setter }) => (
-            <div key={id} className="flex items-center gap-3">
-              <label htmlFor={id} className="text-[11px] text-[#4b5563] w-20 shrink-0 tracking-wide">
+            <div key={id} className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-3">
+              <label htmlFor={id} className="text-[11px] text-[#4b5563] sm:w-20 shrink-0 tracking-wide uppercase">
                 {label}
               </label>
               <input
@@ -91,31 +91,31 @@ export default function LoginPage() {
                 onChange={(e) => setter(e.target.value)}
                 placeholder={placeholder}
                 required
-                className="flex-1 bg-[#16171a] border border-[#2f3133] text-slate-200 text-xs px-2 py-1.5 focus:outline-none focus:border-green-400 placeholder:text-[#374151] transition-colors font-mono"
+                className="flex-1 bg-[#16171a] border border-[#2f3133] text-slate-200 text-xs px-2 py-2 focus:outline-none focus:border-green-400 placeholder:text-[#374151] transition-colors font-mono w-full"
               />
             </div>
           ))}
 
           {error && (
-            <div className="border-l-2 border-red-500 pl-2 py-1 bg-[#16171a]">
-              <p className="text-[11px] text-red-500">// {error}</p>
+            <div className="border-l-2 border-red-500 pl-2 py-1 bg-[#16171a] mt-2">
+              <p className="text-[11px] text-red-500">{"// " + error}</p>
             </div>
           )}
 
           <button
             type="submit"
             disabled={!!loading}
-            className="w-full mt-2 px-4 py-2 text-xs text-[#1a1b1d] bg-green-400 border border-green-400 hover:bg-green-300 transition-colors disabled:opacity-50 tracking-widest uppercase flex items-center justify-center"
+            className="w-full mt-2 px-4 py-2.5 text-xs text-[#1a1b1d] font-bold bg-green-400 border border-green-400 hover:bg-green-300 transition-colors disabled:opacity-50 tracking-widest uppercase flex items-center justify-center"
           >
-            {loading === "credentials" ? <Spinner light /> : "$ sign in"}
+            {loading === "credentials" ? <Spinner light /> : "$ authenticate_session"}
           </button>
         </form>
 
         {/* Register link */}
-        <p className="text-[11px] text-[#4b5563] text-center mt-6">
-      // no account?{" "}
-          <a href="/register" className="text-green-400 hover:text-green-300 transition-colors">
-            create one
+        <p className="text-[11px] text-[#4b5563] text-center mt-8">
+          {"// no account? "}
+          <a href="/register" className="text-green-400 hover:text-green-300 transition-colors underline underline-offset-4">
+            create_one
           </a>
         </p>
 

@@ -4,7 +4,7 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 import cloudinary from "@/lib/cloudinary";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { Category, Status } from "@/generated/prisma/enums";
+import { Category, Status } from "@/generated/prisma/client";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
 
