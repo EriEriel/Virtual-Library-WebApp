@@ -73,7 +73,7 @@ export default function LoginModal({ trigger }: { trigger?: React.ReactNode }) {
           </button>
         )}
       </DialogTrigger>
-      <DialogContent className="bg-[#1a1b1d] border border-[#2f3133] rounded-none p-0 max-w-sm overflow-hidden">
+      <DialogContent className="bg-[#1a1b1d] border border-[#2f3133] rounded-none p-0 w-[95vw] sm:max-w-sm overflow-hidden">
         <DialogHeader>
           <DialogTitle />
         </DialogHeader>
