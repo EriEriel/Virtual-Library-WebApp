@@ -12,6 +12,17 @@ export async function registerUser(formData: FormData) {
     return { error: "Email and password are required." }
   }
 
+  // ASCII only regex
+  const asciiRegex = /^[\x00-\x7F]*$/;
+
+  if (name && (name.length > 20 || !asciiRegex.test(name))) {
+    return { error: "Name must be 20 characters or less and contain only ASCII characters." }
+  }
+
+  if (password.length > 20 || !asciiRegex.test(password)) {
+    return { error: "Password must be 20 characters or less and contain only ASCII characters." }
+  }
+
   const existing = await prisma.user.findUnique({
     where: { email },
   })

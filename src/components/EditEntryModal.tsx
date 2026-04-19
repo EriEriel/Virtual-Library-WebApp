@@ -117,8 +117,12 @@ export default function EditEntryModal({ entry }: { entry: EntryWithTags }) {
                 <SelectValue placeholder="select..." />
               </SelectTrigger>
               <SelectContent className="bg-[#1a1b1d] border border-[#2f3133] rounded-none font-mono">
+                <SelectItem value="MANGA" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Manga</SelectItem>
                 <SelectItem value="FANFIC" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Fanfic</SelectItem>
                 <SelectItem value="NOVEL" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Novel</SelectItem>
+                <SelectItem value="DOCUMENTATION" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Documentation</SelectItem>
+                <SelectItem value="PAPER" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Paper</SelectItem>
+                <SelectItem value="ARTICLE" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Article</SelectItem>
                 <SelectItem value="BOOKMARK" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Bookmark</SelectItem>
                 <SelectItem value="OTHER" className="text-xs text-slate-300 focus:bg-[#2f3133] focus:text-green-400">Other</SelectItem>
               </SelectContent>

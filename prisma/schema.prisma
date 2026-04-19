@@ -96,8 +96,12 @@ model Image {
 }
 
 enum Category {
+  MANGA
   FANFIC
   NOVEL
+  DOCUMENTATION
+  PAPER
+  ARTICLE
   BOOKMARK
   OTHER
 }
