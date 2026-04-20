@@ -73,6 +73,19 @@ export async function addEntry(formData: FormData) {
 
   const tagNames = tagsInput ? tagsInput.split(",").map(t => t.trim()).filter(Boolean) : [];
 
+  if (shelfId) {
+    const shelf = await prisma.shelf.findFirst({
+      where: {
+        id: shelfId,
+        userId: userId,
+      },
+    });
+
+    if (!shelf) {
+      throw new Error("Unauthorized: You do not have access to this shelf.");
+    }
+  }
+
   try {
     const resolvedShelfId = shelfId || (await ensureDefaultShelf(userId));
 
@@ -118,9 +131,11 @@ export async function addEntry(formData: FormData) {
 // PATCH method
 export async function updateEntry(formData: FormData) {
   const session = await auth()
+  if (!session?.user?.id) redirect("/login")
 
-  const userId = session?.user?.id as string
+  const userId = session.user.id
   const id = formData.get("id") as string;
+  // ... rest of form data ...
   const title = formData.get("title") as string;
   const coverUrl = formData.get("coverUrl") as string;
   const existingCoverUrl = formData.get("existingCoverUrl") as string;
@@ -135,6 +150,25 @@ export async function updateEntry(formData: FormData) {
   const shelfId = formData.get("shelfId") as string;
   const tagNames = tagsInput ? tagsInput.split(",").map(t => t.trim()).filter(Boolean) : [];
   const currentPath = formData.get("currentPath") as string || "/";
+
+  // Ownership check for the entry
+  const entry = await prisma.entry.findFirst({
+    where: { id, userId }
+  });
+
+  if (!entry) {
+    throw new Error("Unauthorized: Entry not found or you do not have access.");
+  }
+
+  // Ownership check for the new shelf if provided
+  if (shelfId) {
+    const shelf = await prisma.shelf.findFirst({
+      where: { id: shelfId, userId }
+    });
+    if (!shelf) {
+      throw new Error("Unauthorized: You do not have access to this shelf.");
+    }
+  }
 
   try {
     if (coverUrl !== existingCoverUrl && existingPublicId) {
@@ -183,9 +217,21 @@ export async function updateEntry(formData: FormData) {
 
 // DELETE method 
 export async function deleteEntry(formData: FormData) {
+  const session = await auth()
+  if (!session?.user?.id) redirect("/login")
+
+  const userId = session.user.id
   const id = formData.get("id") as string;
   const currentPath = formData.get("currentPath") as string || "/";
 
+  // Ownership check
+  const entry = await prisma.entry.findFirst({
+    where: { id, userId }
+  });
+
+  if (!entry) {
+    throw new Error("Unauthorized: Entry not found or you do not have access.");
+  }
 
   try {
     const image = await prisma.image.findUnique({
@@ -211,6 +257,20 @@ export async function deleteEntry(formData: FormData) {
 
 // Curated Method
 export async function toggleCurated(id: string, value: boolean) {
+  const session = await auth()
+  if (!session?.user?.id) throw new Error("Unauthorized: You must be logged in.");
+
+  const userId = session.user.id
+
+  // Ownership check
+  const entry = await prisma.entry.findFirst({
+    where: { id, userId }
+  });
+
+  if (!entry) {
+    throw new Error("Unauthorized: Entry not found or you do not have access.");
+  }
+
   await prisma.entry.update({
     where: { id },
     data: { isCurated: value }
@@ -220,10 +280,26 @@ export async function toggleCurated(id: string, value: boolean) {
 
 // Image Upload Method to link Cloudinary URL to userId and EntryId
 export async function imageUpload(formData: FormData) {
+  const session = await auth()
+  if (!session?.user?.id) throw new Error("Unauthorized: You must be logged in.");
+
   const userId = formData.get("userId") as string
   const entryId = formData.get("entryId") as string | undefined
   const url = formData.get("url") as string
   const publicId = formData.get("publicId") as string
+
+  if (userId !== session.user.id) {
+    throw new Error("Unauthorized: User ID mismatch.");
+  }
+
+  if (entryId) {
+    const entry = await prisma.entry.findFirst({
+      where: { id: entryId, userId }
+    });
+    if (!entry) {
+      throw new Error("Unauthorized: Entry not found or you do not have access.");
+    }
+  }
 
   try {
     await prisma.image.create({

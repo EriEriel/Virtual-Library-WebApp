@@ -1,10 +1,11 @@
-import { Cpu, Network, BarChart3, Info, Play } from 'lucide-react';
+import { Cpu, Network, BarChart3, Info, Play, Github } from 'lucide-react';
 
 export const Memory = Cpu;
 export const Hub = Network;
 export const Analytics = BarChart3;
 export const Details = Info;
 export const Execute = Play;
+export const GitHub = Github;
 
 export const Folder = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v8.25" />
