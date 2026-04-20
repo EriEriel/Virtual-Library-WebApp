@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@/auth";
 
 export const revalidate = 3600;
 
@@ -24,6 +25,7 @@ const logs = recentActivity.map((entry) => ({
 }))
 
 export default async function BentoGrid() {
+  const session = await auth();
   // Count total then pick a random offset — Prisma has no native random()
   const count = await prisma.entry.count();
   const randomSkip = count > 0 ? Math.floor(Math.random() * count) : 0;
@@ -65,7 +67,7 @@ export default async function BentoGrid() {
               )}
               <div className="flex flex-col gap-3">
                 <div className="font-mono text-[10px] text-gray-500 uppercase tracking-widest">
-                  {entry.type} &nbsp;·&nbsp; {entry.status.replace("_", " ")}
+                  {entry.category} &nbsp;·&nbsp; {entry.status.replace("_", " ")}
                 </div>
                 <h3 className="text-xl sm:text-4xl font-bold tracking-tight">{entry.title}</h3>
                 {entry.notes && (
@@ -92,12 +94,14 @@ export default async function BentoGrid() {
           <div className="px-6 py-2 bg-white/10 text-white/30 text-[10px] font-mono uppercase font-bold cursor-not-allowed select-none">
             {entry ? entry.status.replace("_", " ") : "Browse"}
           </div>
-          <Link
-            href="/login"
-            className="px-6 py-2 border border-gray-700 text-white text-[10px] font-mono uppercase hover:bg-white/10 transition-colors"
-          >
-            Sign In →
-          </Link>
+          {!session && (
+            <Link
+              href="/login"
+              className="px-6 py-2 border border-gray-700 text-white text-[10px] font-mono uppercase hover:bg-white/10 transition-colors"
+            >
+              Sign In →
+            </Link>
+          )}
         </div>
       </div>
 
@@ -118,4 +122,3 @@ export default async function BentoGrid() {
     </section>
   );
 }
-
