@@ -1,16 +1,16 @@
-
+# Virtual Library
 
 A personal content tracker for readers and fanfic enthusiasts. Track novels, fanfiction, bookmarks, and more — with status tracking, ratings, tags, and notes — all in one place.
 
 Built as a full-stack portfolio project to demonstrate real-world Next.js development with a focus on clean architecture, type safety, and modern tooling.
 
-> **Status**: Core features working — auth and full CRUD in active development.
+> **Status**: Core features working — Auth and Docker containerization complete.
 
 ---
 
 ## About
 
-I built Virtual Library to solve a problem I actually have: keeping track of the novels and fanfiction I read across dozens of different sites. Most reading trackers are either too generic or tied to a specific platform. This one is mine.
+I built Virtual Library to solve a problem I actually have: keeping track of the fiction and documents I read across dozens of different sites. Most reading trackers are either too generic or tied to a specific platform. This one is mine.
 
 The project is also a deliberate learning exercise — I made every architectural decision myself, from the database schema design to the choice of Server Actions over a REST API layer, with the goal of understanding *why* each piece exists, not just how to use it.
 
@@ -23,48 +23,40 @@ The project is also a deliberate learning exercise — I made every architectura
 | Framework | Next.js 15 (App Router) |
 | Language | TypeScript |
 | Database | PostgreSQL |
+| Containerization | Docker + Docker Compose |
+| Image Hosting | Cloudinary |
 | ORM | Prisma 7 (with driver adapters) |
 | Auth | Auth.js v5 (JWT strategy) |
 | Styling | Tailwind CSS |
 | UI Components | shadcn/ui |
-| Deployment | Vercel |
-
----
-
-## Features
-
-**Currently working**
-- Error and empty page handling 
-- Image upload system
-- Group search with tags when click on tags
-- Get default title by enter the URL instead of typing it manually
-
-**In progress**
-- Responsive layout
-- Mocking terminal style CLI to manage archive
-- Curated tab show more stuff than just favourite (The Entry that still mark as plan to read for long period for example)
-
-**Done**
-- Authentication (email/password + OAuth)
-- Per-user data isolation
-- Filtering by category, status etc.
-- Notes per entry
-- Cover image support via URL
-- Search by title, author, tags 
-- Add, edit, and delete entries (novels, fanfic, bookmarks)
-- Tag system for flexible organisation
 
 ---
 
 ## Technical Decisions Worth Noting
 
-**Server Actions over REST API** — Deleted the `api/` directory entirely and moved all data mutations to Server Actions. This removes a whole layer of boilerplate and keeps data-fetching logic colocated with the UI that needs it.
+**Recursive Prisma Mocking for Builds** — Solved the "Prisma Build-Time Connection" chicken-and-egg problem by implementing a recursive Javascript Proxy in `src/lib/prisma.ts`. This mocks the Prisma client during the Next.js static analysis phase, allowing the Docker image to build successfully without requiring a live database connection.
 
-**Prisma 7 driver adapters** — Used the newer driver adapter pattern rather than the traditional Prisma Client setup, which required working through some non-obvious configuration for local PostgreSQL development.
+**Dockerized for Consistency** — Built a multi-stage Dockerfile that uses the Next.js `standalone` output for minimum image size. Handled complex Linux-specific container issues including `chown` permission management for `.next/cache` and `network_mode: host` for local database connectivity.
+
+**Server Actions over REST API** — Moved all data mutations to Server Actions. This removes a whole layer of boilerplate and keeps data-fetching logic colocated with the UI that needs it.
 
 **JWT over database sessions** — Chose stateless JWT sessions with Auth.js to avoid the overhead of a session table lookup on every authenticated request, while still supporting both credentials and OAuth providers.
 
-**Schema-first design** — Designed the full Prisma schema (User, Account, Entry, Tag with enums) before writing any application code, treating the data model as the foundation everything else builds on.
+**Cloudinary Integration** — Integrated Cloudinary for high-performance image storage and optimization, keeping the database lean by storing only the metadata and remote URLs.
+
+---
+
+## Engineering Journal: Deep Dives & Post-Mortems
+
+I believe that every hard bug is a learning opportunity. Throughout development, I maintained a [**`/bug-report`**](./bug-report) directory to document non-trivial issues, their root causes, and the systematic process I used to solve them.
+
+**Selected Technical Post-Mortems:**
+- **[The Docker Build-Time Deadlock](./bug-report/issue-encounter-relate-to-docker.md)**: Solving the "Chicken and Egg" problem of building a Prisma app without a live DB connection using recursive Javascript Proxies.
+- **[Layout Shifts vs. Radix UI](./bug-report/bug-report-page-content-shift.md)**: Debugging asymmetric horizontal shifting caused by Radix's scroll-lock behavior in fixed-margin layouts.
+- **[Stale State & Revalidation Scope](./bug-report/bug-report-stale-state.md)**: Analyzing why `revalidatePath("/")` was too narrow and how modal mounting patterns affect `useActionState`.
+- **[OAuth Identity Conflict](./bug-report/oauth-account-not-linked.md)**: Navigating the security tradeoffs of `allowDangerousEmailAccountLinking` in Auth.js.
+
+This documentation serves as my personal technical knowledge base and ensures I never solve the same hard problem twice.
 
 ---
 
@@ -72,50 +64,61 @@ The project is also a deliberate learning exercise — I made every architectura
 
 ### Prerequisites
 
-- Node.js 18+
-- PostgreSQL (local or hosted)
+- Docker and Docker Compose
+- A local PostgreSQL instance (on your host machine)
 
 ### Setup
 
-```bash
-# Clone the repo
-git clone https://github.com/yourusername/virtual-library.git
-cd virtual-library
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/yourusername/virtual-library.git
+   cd virtual-library
+   ```
 
-# Install dependencies
-npm install
+2. **Configure Environment Variables**
+   Create a `.env` file in the root directory. You will need your own PostgreSQL database and Google/GitHub OAuth credentials.
 
-# Set up environment variables
-cp .env.example .env
-# Fill in DATABASE_URL and AUTH_SECRET in .env
+   ```bash
+   # Database (Replace with your local DB credentials)
+   DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/DATABASE_NAME"
 
-# Run database migrations
-npx prisma migrate dev
+   # Auth.js (Generate a secret with `npx auth secret`)
+   AUTH_SECRET="your_generated_secret"
+   AUTH_URL="http://localhost:3000"
+   AUTH_TRUST_HOST=true
 
-# Start the dev server
-npm run dev
-```
+   # Google OAuth
+   AUTH_GOOGLE_ID="your_google_client_id"
+   AUTH_GOOGLE_SECRET="your_google_client_secret"
+
+   # Cloudinary
+   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your_cloud_name"
+   CLOUDINARY_API_KEY="your_api_key"
+   CLOUDINARY_API_SECRET="your_api_secret"
+   ```
+
+3. **Build and Run with Docker**
+   ```bash
+   # Build the image and start the container
+   docker-compose up --build
+   ```
+
+4. **Initialize the Database**
+   Once the container is running, push your schema to your local database:
+   ```bash
+   npx prisma db push
+   ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
 ## Roadmap
-
-- [ ] Auth — credentials (email + password) and OAuth (GitHub / Google)
-- [ ] Per-user library isolation
-- [ ] Advanced filtering
-- [ ] Reading progress tracking
-- [ ] Public shareable lists
-- [ ] Import from external sources (AO3, NovelUpdates)
-- [ ] More quality of life feature
-- [ ] More polish UI
-
----
-
-## Contributing
-
-This is a personal project and portfolio piece, so I'm not accepting feature PRs — but bug reports and feedback are very welcome. Open an issue if you spot something broken.
+- [x] Auth — credentials and OAuth (GitHub / Google)
+- [x] Full Dockerization & Build Optimization
+- [x] Per-user library isolation
+- [ ] Chrome extension for quick entry addition
+- [ ] Rust-based CLI tool for terminal management and syncing
 
 ---
 
