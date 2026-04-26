@@ -25,6 +25,7 @@ The project is also a deliberate learning exercise — I made every architectura
 | Database | PostgreSQL |
 | Containerization | Docker + Docker Compose |
 | Image Hosting | Cloudinary |
+| E2E Testing | Playwright |
 | ORM | Prisma 7 (with driver adapters) |
 | Auth | Auth.js v5 (JWT strategy) |
 | Styling | Tailwind CSS |
@@ -33,6 +34,8 @@ The project is also a deliberate learning exercise — I made every architectura
 ---
 
 ## Technical Decisions Worth Noting
+
+**Stable E2E Authentication Bypass** — Solved the fragility of automated login by implementing a "Trapdoor" API route (`/api/test/login`). This route generates a signed JWT session cookie directly using the `AUTH_SECRET`, allowing the Playwright robot to bypass complex UI login flows (CSRF/Bot protection) and focus on testing core business logic and CRUD operations in a stable, deterministic environment.
 
 **Recursive Prisma Mocking for Builds** — Solved the "Prisma Build-Time Connection" chicken-and-egg problem by implementing a recursive Javascript Proxy in `src/lib/prisma.ts`. This mocks the Prisma client during the Next.js static analysis phase, allowing the Docker image to build successfully without requiring a live database connection.
 
@@ -110,6 +113,21 @@ This documentation serves as my personal technical knowledge base and ensures I 
    ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+### Running Tests
+
+The project uses Playwright for End-to-End testing.
+
+```bash
+# Run all tests
+npx playwright test
+
+# Run tests in headed mode (see the robot in action)
+npx playwright test --headed
+
+# Show test report
+npx playwright show-report
+```
 
 ---
 
