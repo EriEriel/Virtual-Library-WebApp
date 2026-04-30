@@ -43,7 +43,7 @@ export async function GET(request: Request) {
   response.cookies.set("authjs.session-token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "lax" as const,
     path: "/",
   });
 

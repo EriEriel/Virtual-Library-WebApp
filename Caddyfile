@@ -1,0 +1,6 @@
+# Caddyfile for DuckDNS + Next.js Docker
+
+terminalshelf.duckdns.org {
+    reverse_proxy localhost:3000
+    # Caddy will automatically handle Let's Encrypt SSL certificates
+}
