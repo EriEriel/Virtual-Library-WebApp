@@ -4,7 +4,8 @@ A personal content tracker for readers and fanfic enthusiasts. Track novels, fan
 
 Built as a full-stack portfolio project to demonstrate real-world Next.js development with a focus on clean architecture, type safety, and modern tooling.
 
-> **Status**: Core features working — Auth and Docker containerization complete.
+> **Live Demo**: [https://195.201.149.64.sslip.io/](https://195.201.149.64.sslip.io/)  
+> **Status**: **Live & Operational** — Hosted on Hetzner VPS with Supabase DB.
 
 ---
 
@@ -16,24 +17,29 @@ The project is also a deliberate learning exercise — I made every architectura
 
 ---
 
-## Tech Stack
+## Tech Stack & Infrastructure
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 15 (App Router) |
-| Language | TypeScript |
-| Database | PostgreSQL |
-| Containerization | Docker + Docker Compose |
-| Image Hosting | Cloudinary |
-| E2E Testing | Playwright |
-| ORM | Prisma 7 (with driver adapters) |
-| Auth | Auth.js v5 (JWT strategy) |
-| Styling | Tailwind CSS |
-| UI Components | shadcn/ui |
+| **Framework** | Next.js 15 (App Router / Standalone) |
+| **Language** | TypeScript |
+| **Database** | PostgreSQL (**Supabase Free Tier**) |
+| **Hosting** | **Hetzner Cloud (VPS)** |
+| **Deployment** | **Docker + Docker Compose** |
+| **Web Server** | **Caddy (Automatic HTTPS/SSL)** |
+| **Image Hosting** | Cloudinary |
+| **E2E Testing** | Playwright |
+| **ORM** | Prisma 7 (with driver adapters) |
+| **Auth** | Auth.js v5 (JWT strategy) |
+| **Styling** | Tailwind CSS / shadcn/ui |
 
 ---
 
 ## Technical Decisions Worth Noting
+
+**Automated Production SSL** — Implemented **Caddy** as a reverse proxy to handle automatic SSL/TLS certificate issuance and renewal via Let's Encrypt. This ensures the application is always served over HTTPS without manual intervention.
+
+**Production-Grade Containerization** — Optimized the Docker build using multi-stage builds and the Next.js `standalone` output, resulting in a significantly smaller and more secure production image. Configured `restart: always` policies to ensure high availability on the VPS.
 
 **Stable E2E Authentication Bypass** — Solved the fragility of automated login by implementing a "Trapdoor" API route (`/api/test/login`). This route generates a signed JWT session cookie directly using the `AUTH_SECRET`, allowing the Playwright robot to bypass complex UI login flows (CSRF/Bot protection) and focus on testing core business logic and CRUD operations in a stable, deterministic environment.
 
