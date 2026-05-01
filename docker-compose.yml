@@ -1,7 +1,9 @@
 services:
   web:
     build: .
-    network_mode: "host"
+    restart: always
+    ports:
+      - "3000:3000"
     environment:
       - PORT=3000
       - HOSTNAME=0.0.0.0
