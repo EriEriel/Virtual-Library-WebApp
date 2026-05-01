@@ -39,10 +39,9 @@ export async function GET(request: Request) {
 
   // 4. Set the cookie and redirect to home
   const response = NextResponse.redirect(new URL("/", request.url));
-  
+
   response.cookies.set("authjs.session-token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
     sameSite: "lax" as const,
     path: "/",
   });
